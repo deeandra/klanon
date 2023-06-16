@@ -26,6 +26,6 @@ export const actions = {
             return {failed: true, message: 'Server error. Try again later.'}
         }
 
-        throw redirect(303, "/c")
+        throw redirect(303, "/me")
     }
 };

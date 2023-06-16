@@ -1,7 +1,3 @@
-<svelte:head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</svelte:head>
-
 <script>
     export let form
     import CenterLogoNavbar from '$lib/components/CenterLogoNavbar.svelte'
@@ -10,7 +6,7 @@
 <CenterLogoNavbar/>
 
 <div class="h-full flex items-center justify-center">
-    <div class="w-96 p-6 shadow-lg bg-base-100 rounded-lg max-w-[90%] min-w-[24rem]">
+    <div class="w-96 p-6 shadow-lg bg-base-200 rounded-lg max-w-[90%] min-w-[24rem]">
         <h1 class="text-xl font-bold block text-center text-base-content">Log In</h1>
         <form action="?/login" method="POST">
             <div class="form-control w-full mb-3 mt-8 relative">
