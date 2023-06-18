@@ -1,21 +1,46 @@
-import { fail, redirect } from '@sveltejs/kit';
-
 /* eslint-disable no-unused-vars */
-export const actions = {
-    join: async ({ request, locals }) => {
+/* eslint-disable no-empty */
 
-        // classId = get from class where invite_code = classInviteCode
-        const classId = 0
+import { json } from '@sveltejs/kit';
 
-        /* eslint-disable no-unused-vars */
-        const { data, error:err } = await locals.supabase.from('user_class').insert({user_id: locals.session.user.id, class_id: classId, role: 'student'}).select()
+export async function POST({ request, locals }) {
+    
+    let success = false
+    let message = ""
+    let class_id = ""
+    let class_name = ""
+    const body = await request.json()
+
+    try {
+        const { data, error:err } = await locals.supabase.from('class')
+        .select()
+        .eq('invitation_code', body.invitation_code)
+        .single()
 
         if (err) {
-            return fail(500, {
-                message: 'Server error. Try again later.'
-            })
+            message = "Incorrect invitation code or password"
         }
+        else if (data) {
+            class_id = data.id
+            class_name = data.name
+    
+            if (data.invitation_password == body.invitation_password) {
+                success = true
+            } else {
+                message = "Incorrect invitation password"
+            }
+        }
+    } 
+    catch (error) {
 
-        throw redirect(303, "/")
     }
-};
+
+    const res = {
+        success: success,
+        class_id: class_id,
+        class_name: class_name,
+        message: message
+    }
+
+    return json(res) 
+}

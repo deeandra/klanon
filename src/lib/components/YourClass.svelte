@@ -1,18 +1,22 @@
 <script>
-    export let url;
-    export let name;
-    export let avatar;
+    import ClassIcon from "$lib/components/ClassIcon.svelte";
+
+    export let user_class
+    export let supabase
+
+    let url = "/me/c/" + user_class.class_id
 </script>
 
 <li>
-    <a href="#">
-        <div class="w-8 h-8 mask mask-squircle bg-white flex-shrink-0">
+    <a href={url} class={user_class.styles}>
+        <!-- <div class="w-8 h-8 mask mask-squircle bg-white flex-shrink-0">
             <img src="/education.jpg" alt="User 1 Avatar" class="w-8 h-8 rounded-full">
-        </div>
-        <span class="truncate">Calculus 101</span>
+        </div> -->
+        <ClassIcon {user_class} {supabase} />
+        <span class="truncate">{user_class.class.name}</span>
     </a>
 </li>
-<li>
+<!-- <li>
     <a href="#" class="flex items-center">
         <div class="indicator">
             <span class="indicator-item badge badge-secondary p-[0.3rem] h-[0.3rem] top-[0.1rem] right-[0.1rem]"></span>
@@ -22,7 +26,7 @@
         </div>
         <span class="truncate">Pengantar Teknik Komputer</span>
     </a>
-</li>
+</li> -->
 
 <style>
     li > a > .truncate:hover {

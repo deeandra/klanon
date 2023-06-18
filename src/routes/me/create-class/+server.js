@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 
 export async function POST({ request, locals }) {
     const body = Object.fromEntries(await request.formData())
@@ -13,9 +13,7 @@ export async function POST({ request, locals }) {
         }).select()
 
     if (err) {
-        return fail(500, {
-            message: 'Server error. Try again later.'
-        })
+        console.log(err)
     }
 
     // if (err) {

@@ -1,5 +1,6 @@
 <script>
     export let modalId;
+    export let mode;
 </script>
 
 <!-- <dialog id={modalId} class="modal">
@@ -12,7 +13,7 @@
 
 <!-- Put this part before </body> tag -->
 <input type="checkbox" id={modalId} class="modal-toggle" />
-<div class="modal">
+<div class="modal {mode}">
   <div class="modal-box">
     <label for={modalId} class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
     <slot></slot>
