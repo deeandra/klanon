@@ -5,7 +5,7 @@
 
 <CenterLogoNavbar/>
 
-<div class="h-full flex items-center justify-center">
+<div class="h-screen flex items-center justify-center">
     <div class="w-96 p-6 shadow-lg bg-base-200 rounded-lg max-w-[90%] min-w-[24rem]">
         <h1 class="text-xl font-bold block text-center text-base-content">Log In</h1>
         <form action="?/login" method="POST">

@@ -35,7 +35,7 @@
         regexC = new RegExp("^\/me\/c");
         if (regexC.test(route)) {
             const userClassIndex = user_classes.findIndex(obj => obj.class_id == parseInt(params.class_id))
-            console.log(userClassIndex)
+            // console.log(userClassIndex)
             if(userClassIndex != -1) {
                 user_classes[userClassIndex].styles = "bg-base-100 text-white";
             }
@@ -94,35 +94,38 @@
 </script>
 
 <!-- Sidebar -->
-<div class="bg-base-200 text-gray-500 w-[14.3rem] flex flex-col my-4 ml-4 rounded-lg py-2">
+<div class="bg-transparent w-[14.3rem] flex flex-col py-6 ml-4 rounded-lg max-h-full">
+</div>
+
+<div class="fixed bg-base-200 text-gray-500 w-[14.3rem] flex flex-col my-4 ml-4 rounded-lg py-2 max-h-full z-50">
     <nav class="flex-1">
     <ul class="menu px-2 w-100% h-full bg-base-200 text-gray-500">
         <!-- Sidebar content here -->
         <li>
-            <a href="/me/home" id="home" class={menu_classes[0]}>
+            <a data-sveltekit-reload href="/me/home" id="home" class={menu_classes[0]}>
                 <i class="fa-solid fa-house w-4"></i>Home
             </a>
         </li>
         <li>
-            <a href="/me/my-activity" id="my-activity" class={menu_classes[1]}>
+            <a data-sveltekit-reload href="/me/my-activity" id="my-activity" class={menu_classes[1]}>
                 <i class="fa-solid fa-pen-to-square w-4"></i>My Activity
             </a>
         </li>
         <li>
-            <a href="/me/saved" id="saved" class={menu_classes[2]}>
+            <a data-sveltekit-reload href="/me/saved" id="saved" class={menu_classes[2]}>
                 <i class="fa-solid fa-bookmark w-4"></i>Saved Posts
             </a>
         </li>
         {#if user_is_moderator}
         <li>
-            <a href="/me/waitlist" id="saved" class={menu_classes[3]}>
+            <a data-sveltekit-reload href="/me/waitlist" id="saved" class={menu_classes[3]}>
                 <i class="fa-solid fa-hourglass-start w-4"></i>Waitlist
             </a>
         </li>
         {/if}
         {#if user_is_instructor}
         <li>
-            <a href="/me/student-stats" id="student-stats" class={menu_classes[4]}>
+            <a data-sveltekit-reload href="/me/student-stats" id="student-stats" class={menu_classes[4]}>
                 <i class="fa-solid fa-chart-simple w-4"></i>Student Engagement
             </a>
         </li>  
@@ -147,6 +150,7 @@
     </ul>
     </nav>
 </div>
+
 
 <Modal modalId="join_modal">
     <h3 class="font-bold text-lg mb-2">Join a Classroom</h3>

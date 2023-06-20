@@ -8,7 +8,7 @@
 
 </script>
 
-<div class="navbar absolute pt-1">
+<div class="navbar fixed pt-1 max-h-10 bg-base-100 z-50">
     <div class="navbar-start">
         <a class="btn btn-ghost normal-case text-xl font-serif mx-2 px-6" href="/">Klanon</a>
     </div>
@@ -17,9 +17,10 @@
         {#if !data.session}
         <a class="btn btn-ghost" href="/login">Log In</a>
         {:else}
-        <div class="dropdown dropdown-hover dropdown-end">
-            <Avatar url={user.avatar_url} username={user.full_name}/>
-            <ul class="dropdown-content p-2 menu shadow bg-base-200 rounded-box w-52">
+        <div class="dropdown dropdown-hover dropdown-end mr-3">
+            <Avatar url={user.avatar_url} username={user.full_name} size="40"/>
+            
+            <ul class="dropdown-content p-2 menu menu-xs shadow bg-base-200 rounded-box w-52">
                 <p class="mx-4 my-2 font-bold">{user.username}</p>
                 <div class="divider m-0"></div>
                 <li><a>Account Settings</a></li>

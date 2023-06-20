@@ -22,9 +22,10 @@
 		return () => data.subscription.unsubscribe()
 	})
 </script>
-  
 
-<div class="absolute inset-0 bg-base-100" data-theme="dark">
+<div class="absolute inset-0 bg-base-100 overflow-hidden min-h-screen max-h-fit" data-theme="dark">
     <Navbar {data}/>
     <slot />
 </div>
+
+

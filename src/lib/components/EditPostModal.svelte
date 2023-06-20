@@ -1,8 +1,9 @@
 <script>
     import Modal from "$lib/components/Modal.svelte";
     import { page } from '$app/stores';
+	import CreatePostModal from "./CreatePostModal.svelte";
 
-    export let data
+    export let post
     export let form
 
     const adj = ["furry","ferocious","dangerous","poisonous","tame","agile","clever","aggressive","tiny","domestic","wild","herbivorous","carnivorous","Adorable","Aggressive","Agile","Beautiful","Bossy","Candid","Carnivorous","Clever","Cold","Cold-Blooded","Colorful","Cuddly","Curious","Cute","Dangerous","Deadly","Domestic","Dominant","Energetic","Fast","Feisty","Ferocious","Fierce","Fluffy","Friendly","Furry","Fuzzy","Grumpy","Hairy","Heavy","Herbivorous","Jealous","Large","Lazy","Loud","Lovable","Loving","Malicious","Maternal","Mean","Messy","Nocturnal","Noisy","Nosy","Picky","Playful","Poisonous","Quick","Rough","Sassy","Scaly","Short","Shy","Slimy","Slow","Small","Smart","Smelly","Soft","Spikey","Stinky","Strong","Stubborn","Submissive","Tall","Tame","Tenacious","Territorial","Tiny","Vicious","Warm","Wild"]
@@ -27,17 +28,15 @@
     let user_display_name
 
     $: {
-        if(data.thisClass.user_class[0].display_name){
-            user_display_name = data.thisClass.user_class[0].display_name
-        }
-        else {
-            user_display_name = data.user.full_name
-        }
+        user_display_name = post.op_display_name
     } 
 
-    let anon_status ="none"
+    let anon_status = post.op_anon_status
     const generated_pseudonym = generatePseudonym()
+
     let pseudonym = generated_pseudonym
+
+    $: pseudonym = post.op_pseudonym ? post.op_pseudonym : generated_pseudonym
 
     $: {
         if(anon_status == "none") {
@@ -66,7 +65,7 @@
 
     function handleEdit() {
         abusiveAlertMode = ""
-        let checkbox = document.getElementById('create_post_modal');
+        let checkbox = document.getElementById('edit_modal');
         checkbox.checked = !checkbox.checked;
         pseudonym = form.body.pseudonym
         anon_status = form.body.anon_status
@@ -76,31 +75,10 @@
         const button = document.getElementById("send_to_mod_btn")
         button.click()
     }
-    
-
-    // async function handlePost() {
-    //     post_status = "published"
-    //     const form = document.getElementById("postForm");
-    //     const formData = new FormData(form);
-
-    //     const response = await fetch('/api/post', {
-    //         method: "POST",
-    //         body: formData
-    //     })
-
-    //     const res = await response.json()
-    //     console.log(res)
-
-    //     if (res.success) {
-    //         let checkbox = document.getElementById('create_post_modal');
-    //         checkbox.checked = !checkbox.checked;
-    //     }
-        
-    // }
 </script>
 
-<Modal modalId="create_post_modal" mode="">
-    <h3 class="font-bold text-lg">Posting on <strong>{data.thisClass.name}</strong></h3>
+<Modal modalId="edit_modal" mode="">
+    <h3 class="font-bold text-lg">Posting on <strong>{post.class_name}</strong></h3>
     <div class="mt-3">Anonymous mode :</div>
     <div class="flex items-center mt-3">
         <label>
@@ -130,15 +108,20 @@
     
     
     <div class="form-control w-full">
-        <form action="?/post" method="POST" id="post_form">
-            <input name="title" type="text" placeholder="Title" class="input w-full bg-base-200 mt-4" value={form?.body?.title ? form.body.title : ""} />
+        <form action="?/postedit" method="POST" id="post_form">
+            <input name="title" type="text" placeholder="Title" 
+                class="input w-full bg-base-200 mt-4" 
+                value={form?.body?.title ? form.body.title : post.title} />
 
-            <textarea name="content" class="bg-base-200 textarea w-full text-base mt-4 h-48" placeholder="Content" value={form?.body?.content ? form.body.content : ""}></textarea>
+            <textarea name="content" placeholder="Content"
+                class="bg-base-200 textarea w-full text-base mt-4 h-48"  
+                value={form?.body?.content ? form.body.content : decodeURIComponent(post.content)}></textarea>
 
-            <input name="class_id" class="hidden" value={$page.params.class_id}/>
+            <input name="class_id" class="hidden" value={post.class_id}/>
             <input name="anon_status" class="hidden" value={anon_status}/>
             <input name="pseudonym" class="hidden" value={display_name}/>
-            <input name="role" class="hidden" value={data.thisClass.user_class[0].role}/>
+            <input name="post_id" class="hidden" value={post.post_id}/>
+            <input name="role" class="hidden" value={post.op_role}/>
             
             <div class="modal-action">
                 <button name="post_status" value="draft" class="btn">Save As Draft</button>
@@ -163,3 +146,4 @@
         <button class="btn btn-primary" on:click={handleSendMod}>Send to Moderator</button>
     </div>
 </Modal>
+

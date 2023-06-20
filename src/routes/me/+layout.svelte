@@ -4,7 +4,7 @@
     export let data;
 </script>
 
-<div class="flex h-screen bg-base-100 pt-12">
+<div class="flex bg-base-100 pt-12">
     <SideNavbar {data}/>
     <slot/>
 </div>

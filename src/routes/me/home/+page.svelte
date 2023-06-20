@@ -6,7 +6,7 @@
 </script>
 
 
-<div class="flex-1 mt-1 overflow-y-auto">
+<div class="flex-1 mt-1">
 
     {#each data.posts as post(post.post_id)}
         <Post postData={post} postType="feed_page" {data}/>

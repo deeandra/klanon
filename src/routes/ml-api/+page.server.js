@@ -6,6 +6,7 @@ export const actions = {
 
         const message = body.get("message")
         let prediction = {}
+        console.log(body)
 
         try {
             const res = await fetch("http://127.0.0.1:5000/predict", {

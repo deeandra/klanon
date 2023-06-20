@@ -50,3 +50,24 @@ export const load = async ({ locals, params }) => {
 
     return { posts };
 };
+
+export const actions = {
+    delete: async ({request, locals}) => {
+        const session = await locals.getSession();
+
+        const body = Object.fromEntries(await request.formData())
+
+        const { error:err1 } = await locals.supabase.from('post')
+            .update({is_deleted: true})
+            .eq('id', body.post_id)
+            .select().single()
+
+
+        if (err1) {
+            console.log(err1)
+        }
+
+        return
+        
+    },
+}

@@ -3,9 +3,9 @@
     export let username
     export let size
 
-    if (!size) {
-        size = 8
-    }
+    // if (!size) {
+    //     size = "40"
+    // }
 
     let avatarUrl
     // let ava_url = "https://ehmizkpvugvqmffbnelh.supabase.co/storage/v1/object/public/klanon-storage/avatars/" + url.toString()
@@ -16,19 +16,15 @@
 
 <div>
 	{#if url}
-        <div class="w-{size} h-{size} mask mask-squircle bg-transparent flex-shrink-0">
-            <img src={url} alt="Avatar" class="w-{size} h-{size} mask mask-squircle">
+        <!-- <div class="w-[{size}] h-[{size}] mask mask-squircle bg-white flex-shrink-0">
+            <img src={url} alt="Avatar" class="object-cover w-full h-full">
         </div>
-        
-		<!-- <img
-			src={avatarUrl}
-			alt={avatarUrl ? 'Avatar' : 'No image'}
-			class="avatar image"
-			style="height: {size}em; width: {size}em;"
-		/> -->
+         -->
+        <img src={url} alt="Avatar" height={size} width={size} class="mask mask-squircle">
 	{:else}
-        <div class="w-{size} h-{size} mask mask-squircle bg-transparent flex-shrink-0">
-            <img src={randomAvaUrl} alt="Avatar" class="w-{size} h-{size} mask mask-squircle">
-        </div>
+        <!-- <div class="w-[{size}] h-[{size}] mask mask-squircle bg-white flex-shrink-0">
+            <img src={randomAvaUrl} alt="Avatar" class="max-w-full max-h-full">
+        </div> -->
+        <img src={randomAvaUrl} alt="Avatar" height={size} width={size} class="mask mask-squircle">
 	{/if}
 </div>
