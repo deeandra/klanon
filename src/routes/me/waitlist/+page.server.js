@@ -22,7 +22,7 @@ export const load = async ({ locals, params }) => {
     let { data:posts, error:err1 } = await locals.supabase.rpc('get_waitlist', {
         user_class_ids: user_class_ids,
         session_user_id: session.user.id
-    }). order('created_at', { ascending: false })
+    }). order('updated_at', { ascending: false })
     
     if (err1) {
         console.log(err1)
@@ -38,9 +38,25 @@ export const load = async ({ locals, params }) => {
         }
     }
 
-    console.log(posts)
+    let { data:comments, error:err2 } = await locals.supabase.rpc('get_waitlist_comments', {
+        user_class_ids: user_class_ids,
+        session_user_id: session.user.id
+    }). order('updated_at', { ascending: false })
+    
+    if (err2) {
+        console.log(err2)
+    }
+    else if(comments){ 
+        for (let i=0; i<comments?.length; i++) {
+            if (comments[i].op_anon_status != 'none') {
+                comments[i].op_display_name = comments[i].op_pseudonym
+                comments[i].op_avatar_url = ""
+            }
+        }
+    }
 
-    return { posts };
+
+    return { posts, comments };
 };
 
 export const actions = {
@@ -49,12 +65,10 @@ export const actions = {
 
         const body = Object.fromEntries(await request.formData())
 
-        const { data:post, error:err1 } = await locals.supabase.from('post')
+        const { error:err1 } = await locals.supabase.from('post')
             .update({post_status: "published"})
             .eq('id', body.post_id)
             .select().single()
-
-        console.log(post)
 
         if (err1) {
             console.log(err1)
@@ -69,7 +83,6 @@ export const actions = {
         const { error:err1 } = await locals.supabase.from('post')
             .update({is_deleted: true})
             .eq('id', body.post_id)
-            .select().single()
 
 
         if (err1) {
@@ -77,6 +90,22 @@ export const actions = {
         }
 
         return
+        
+    },
+
+    approvecomment: async ({request, locals}) => {
+        const session = await locals.getSession();
+
+        const body = Object.fromEntries(await request.formData())
+
+        const { error:err1 } = await locals.supabase.from('comment')
+            .update({comment_status: "published"})
+            .eq('id', body.comment_id)
+
+
+        if (err1) {
+            console.log(err1)
+        }
         
     },
 };

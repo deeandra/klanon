@@ -1,10 +1,10 @@
 <script>
     import Modal from "$lib/components/Modal.svelte";
     import { page } from '$app/stores';
-	import CreatePostModal from "./CreatePostModal.svelte";
 
     export let post
     export let form
+    export let data
 
     const adj = ["furry","ferocious","dangerous","poisonous","tame","agile","clever","aggressive","tiny","domestic","wild","herbivorous","carnivorous","Adorable","Aggressive","Agile","Beautiful","Bossy","Candid","Carnivorous","Clever","Cold","Cold-Blooded","Colorful","Cuddly","Curious","Cute","Dangerous","Deadly","Domestic","Dominant","Energetic","Fast","Feisty","Ferocious","Fierce","Fluffy","Friendly","Furry","Fuzzy","Grumpy","Hairy","Heavy","Herbivorous","Jealous","Large","Lazy","Loud","Lovable","Loving","Malicious","Maternal","Mean","Messy","Nocturnal","Noisy","Nosy","Picky","Playful","Poisonous","Quick","Rough","Sassy","Scaly","Short","Shy","Slimy","Slow","Small","Smart","Smelly","Soft","Spikey","Stinky","Strong","Stubborn","Submissive","Tall","Tame","Tenacious","Territorial","Tiny","Vicious","Warm","Wild"]
 
@@ -28,15 +28,28 @@
     let user_display_name
 
     $: {
-        user_display_name = post.op_display_name
+        user_display_name = data.user_classes.find(obj => obj.class_id == post?.class_id).display_name
     } 
 
-    let anon_status = post.op_anon_status
+    let user_role
+    $: {
+        user_role = data.user_classes.find(obj => obj.class_id == post?.class_id).role
+    } 
+
     const generated_pseudonym = generatePseudonym()
 
-    let pseudonym = generated_pseudonym
+    let pseudonym 
 
-    $: pseudonym = post.op_pseudonym ? post.op_pseudonym : generated_pseudonym
+    $: pseudonym = post?.op_pseudonym ? post?.op_pseudonym : generated_pseudonym
+
+    let anon_status = post?.op_anon_status
+    let prev_anon_status = post?.op_anon_status
+    $: {
+        if (prev_anon_status != post?.op_anon_status) {
+            anon_status = post?.op_anon_status
+            prev_anon_status = post?.op_anon_status
+        }
+    }
 
     $: {
         if(anon_status == "none") {
@@ -65,7 +78,7 @@
 
     function handleEdit() {
         abusiveAlertMode = ""
-        let checkbox = document.getElementById('edit_modal');
+        let checkbox = document.getElementById('edit_post_modal');
         checkbox.checked = !checkbox.checked;
         pseudonym = form.body.pseudonym
         anon_status = form.body.anon_status
@@ -77,10 +90,12 @@
     }
 </script>
 
-<Modal modalId="edit_modal" mode="">
-    <h3 class="font-bold text-lg">Posting on <strong>{post.class_name}</strong></h3>
+<Modal modalId="edit_post_modal" mode="">
+    <div class="badge badge-accent badge-outline text-gray-600 font-bold truncate">
+        {"POSTING IN " + post?.class_name.toUpperCase()}
+    </div>
     <div class="mt-3">Anonymous mode :</div>
-    <div class="flex items-center mt-3">
+    <div class="flex items-center mt-1 mb-2">
         <label>
             <input type="radio" name="anon_status" bind:group={anon_status} 
             value={"none"} class="radio radio-xs radio-primary mr-2" />
@@ -98,30 +113,29 @@
         </label>
     </div>
 
-    <div class="flex mt-3 mb-2 items-center">
+    <div class="flex mt-1 mb-1 items-center">
         <span>Posting as</span>
         <div class="badge badge-primary ml-2">{display_name}</div>
         {#if anon_status!="none"}
-            <div class="badge badge-accent badge-outline ml-2">anon</div>
+            <div class="badge badge-primary badge-outline font-bold ml-2">anon</div>
         {/if}
     </div>
     
-    
     <div class="form-control w-full">
-        <form action="?/postedit" method="POST" id="post_form">
+        <form action="?/postedit" method="POST" id="post_edit_form">
             <input name="title" type="text" placeholder="Title" 
                 class="input w-full bg-base-200 mt-4" 
-                value={form?.body?.title ? form.body.title : post.title} />
+                value={form?.body?.title ? form.body.title : post?.title} />
 
             <textarea name="content" placeholder="Content"
                 class="bg-base-200 textarea w-full text-base mt-4 h-48"  
-                value={form?.body?.content ? form.body.content : decodeURIComponent(post.content)}></textarea>
+                value={form?.body?.content ? form.body.content : decodeURIComponent(post?.content)}></textarea>
 
-            <input name="class_id" class="hidden" value={post.class_id}/>
+            <input name="class_id" class="hidden" value={post?.class_id}/>
             <input name="anon_status" class="hidden" value={anon_status}/>
             <input name="pseudonym" class="hidden" value={display_name}/>
-            <input name="post_id" class="hidden" value={post.post_id}/>
-            <input name="role" class="hidden" value={post.op_role}/>
+            <input name="post_id" class="hidden" value={post?.post_id}/>
+            <input name="role" class="hidden" value={user_role}/>
             
             <div class="modal-action">
                 <button name="post_status" value="draft" class="btn">Save As Draft</button>

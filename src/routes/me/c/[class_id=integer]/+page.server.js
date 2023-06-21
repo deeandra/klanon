@@ -13,7 +13,7 @@ export const load = async ({ locals, params, cookies }) => {
     let { data:posts, error:err1 } = await locals.supabase.rpc('get_class_posts', {
         current_class_id: class_id,
         session_user_id: session.user.id
-    }). order('created_at', { ascending: false })
+    }).order('updated_at', { ascending: false })
     
     if (err1) {
         console.log(err1)
@@ -33,7 +33,7 @@ export const load = async ({ locals, params, cookies }) => {
 
     const { data:thisClass, error:err2 } = await locals.supabase
       .from('class')
-      .select('name, description, banner_url, user_class(role, display_name)')
+      .select('id, name, description, avatar_url, invitation_code, invitation_password, user_class(role, display_name)')
       .eq('id', class_id)
       .eq('user_class.user_id', session.user.id)
       .single()
@@ -41,19 +41,17 @@ export const load = async ({ locals, params, cookies }) => {
     if (err2) {
         console.log(err2)
     }
-    console.log(posts)
 
-    // const prediction_message = cookies.get('prediction_message')
-    // const title = cookies.get('prediction_message')
-    // const content = cookies.get('prediction_message')
+    const { data:members, error:err3 } = await locals.supabase
+        .from('user_class')
+        .select('user_id, role, display_name, users(avatar_url)')
+        .eq('class_id', class_id)
+    
+    if (err3) {
+        console.log(err3)
+    }
 
-    // const lastPostAttempt = {
-    //     prediction_message: prediction_message,
-    //     title: title,
-    //     content: content
-    // }
-
-    return { thisClass, posts };
+    return { thisClass, posts, members };
 };
 
 
@@ -71,7 +69,8 @@ export const actions = {
 
         console.log(formData)
 
-        if (body.post_status == "draft" || body.post_status == "pending" || body.role != "student") {
+        // || body.role != "student"
+        if (body.post_status == "draft" || body.post_status == "pending") {
             const { data:post, error:err1 } = await locals.supabase.from('post')
                 .insert({
                     user_id: session.user.id, 
@@ -123,7 +122,7 @@ export const actions = {
                 console.error(error)
             }
 
-            if (parseFloat(prediction.score) < 70) {
+            if (parseFloat(prediction.score) <= 50) {
                 const { data:post, error:err1 } = await locals.supabase.from('post')
                     .insert({
                         user_id: session.user.id, 
@@ -192,6 +191,16 @@ export const actions = {
             console.log(err1)
         }
 
+        const { error:err2 } = await locals.supabase.from('comment')
+            .update({is_deleted: true})
+            .eq('post_id', body.post_id)
+
+
+        if (err2) {
+            console.log(err2)
+        }
+
+
         return
         
     },
@@ -201,12 +210,9 @@ export const actions = {
 
         const body = Object.fromEntries(await request.formData())
 
-        const { data:post, error:err1 } = await locals.supabase.from('post')
+        const { error:err1 } = await locals.supabase.from('post')
             .update({is_pinned: true})
             .eq('id', body.post_id)
-            .select().single()
-
-        console.log(post)
 
         if (err1) {
             console.log(err1)
@@ -219,16 +225,87 @@ export const actions = {
 
         const body = Object.fromEntries(await request.formData())
 
-        const { data:post, error:err1 } = await locals.supabase.from('post')
+        const { error:err1 } = await locals.supabase.from('post')
             .update({is_pinned: false})
             .eq('id', body.post_id)
-            .select().single()
-
-        console.log(post)
 
         if (err1) {
             console.log(err1)
         }
         
-    }
+    },
+
+    likepost: async ({request, locals}) => {
+        const session = await locals.getSession();
+
+        const body = Object.fromEntries(await request.formData())
+
+        let { error:err } = await locals.supabase.rpc('add_or_delete_post_like', {
+            session_user_id: session.user.id,
+            current_post_id: body.post_id
+        })
+        
+        if (err) {
+            console.log(err)
+        }
+        
+    },
+
+    save: async ({request, locals}) => {
+        const session = await locals.getSession();
+
+        const body = Object.fromEntries(await request.formData())
+
+        let { error:err } = await locals.supabase.rpc('add_or_delete_user_saved', {
+            session_user_id: session.user.id,
+            current_post_id: body.post_id
+        })
+        
+        if (err) {
+            console.log(err)
+        }
+        
+    },
+
+    editclass: async ({request, locals}) => {
+        const session = await locals.getSession();
+
+        const body = Object.fromEntries(await request.formData())
+
+        const { error:err1 } = await locals.supabase.from('class')
+            .update({
+                name: body.name,
+                invitation_code: body.invitation_code,
+                invitation_password: body.invitation_password,
+                description: body.description,
+                avatar_url: body.avatar_url
+            })
+            .eq('id', body.class_id)
+
+
+        if (err1) {
+            console.log(err1)
+        }
+
+
+        return
+        
+    },
+
+    changedisplayname: async ({request, locals, params}) => {
+        const session = await locals.getSession();
+        const class_id = params.class_id
+
+        const body = Object.fromEntries(await request.formData())
+
+        const { error:err } = await locals.supabase.from('user_class')
+            .update({display_name: body.display_name})
+            .eq('user_id', session.user.id)
+            .eq('class_id', class_id)
+
+        if (err) {
+            console.log(err)
+        }
+        
+    },
 };

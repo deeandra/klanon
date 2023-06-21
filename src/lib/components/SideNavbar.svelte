@@ -7,6 +7,7 @@
     import YourClass from "$lib/components/YourClass.svelte";
     import { json } from "@sveltejs/kit";
     import { page } from '$app/stores';
+	import Avatar from "./Avatar.svelte";
 
     export let data;
     
@@ -65,6 +66,7 @@
     let join_message = ""
     let class_name = ""
     let class_id = ""
+    let join_class_avatar_url = ""
 
     async function handleContinueJoin() {
         const response = await fetch('/me/join', {
@@ -81,6 +83,7 @@
         join_message = res.message
         class_name = res.class_name
         class_id = res.class_id
+        join_class_avatar_url = res.avatar_url
 
         if (res.success) {
             let checkbox = document.getElementById('join_modal');
@@ -195,6 +198,11 @@
 <Modal modalId="continue-join_modal">
     <!-- <h3 class="font-bold text-lg mb-2">Join a Classroom</h3> -->
     <p class="pt-4 text-center">You're joining this class:</p> 
+    <div class="flex w-full justify-center">
+        <div class="w-32">
+            <Avatar url={join_class_avatar_url} username={class_name} supabase={data.supabase}></Avatar>
+        </div>
+    </div>
     <h2 class="text-center font-bold text-2xl m-4">{class_name}</h2>
     <form action="/me/join/confirm" method="POST">
         <div class="form-control w-full">

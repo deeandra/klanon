@@ -9,6 +9,7 @@ export async function POST({ request, locals }) {
     let message = ""
     let class_id = ""
     let class_name = ""
+    let avatar_url = ""
     const body = await request.json()
 
     try {
@@ -23,6 +24,7 @@ export async function POST({ request, locals }) {
         else if (data) {
             class_id = data.id
             class_name = data.name
+            avatar_url = data.avatar_url
     
             if (data.invitation_password == body.invitation_password) {
                 success = true
@@ -39,6 +41,7 @@ export async function POST({ request, locals }) {
         success: success,
         class_id: class_id,
         class_name: class_name,
+        avatar_url: avatar_url,
         message: message
     }
 

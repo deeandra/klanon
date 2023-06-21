@@ -1,5 +1,6 @@
 <script>
     import ClassIcon from "$lib/components/ClassIcon.svelte";
+    import Avatar from "$lib/components/Avatar.svelte";
 
     export let user_class
     export let supabase
@@ -12,7 +13,11 @@
         <!-- <div class="w-8 h-8 mask mask-squircle bg-white flex-shrink-0">
             <img src="/education.jpg" alt="User 1 Avatar" class="w-8 h-8 rounded-full">
         </div> -->
-        <ClassIcon {user_class} {supabase} />
+        <!-- <ClassIcon {user_class} {supabase} /> -->
+        
+        <div class="w-12">
+            <Avatar url={user_class.class.avatar_url} username={user_class.class.name} {supabase}></Avatar>
+        </div>
         <span class="truncate">{user_class.class.name}</span>
     </a>
 </li>

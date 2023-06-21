@@ -1,7 +1,9 @@
 <script>
 	import Avatar from "$lib/components/Avatar.svelte";
 	import Modal from "$lib/components/Modal.svelte";
-	import EditPostModal from "./EditPostModal.svelte";
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
 
     export let data
     export let postData
@@ -13,7 +15,7 @@
 
     $: {
         post = postData
-        date = new Date(post?.created_at)
+        date = new Date(post?.updated_at)
         postDate = date.toLocaleDateString() + " " + date.toLocaleTimeString()
     }
 
@@ -30,88 +32,54 @@
         user_role = data.user_classes.find(obj => obj.class_id == post.class_id).role
     }
 
-    let user_has_saved
-    $: user_has_saved = post.user_has_saved
-    let swap_not_saved
-    let swap_saved
 
+    function handleSave() {
+        dispatch('save', {
+			post_id: post.post_id
+		});
+    }
+
+
+    function handleLike() {
+        dispatch('likepost', {
+			post_id: post.post_id
+		});
+    }
+
+    function handleApprove() {
+        dispatch('approve', {
+			post_id: post.post_id
+		});
+    }
+
+    function handleDelete() {
+        dispatch('delete', {
+			post_id: post.post_id
+		});
+    }
+
+    function handlePin() {
+        dispatch('pinpost', {
+			post_id: post.post_id
+		});
+    }
+
+    function handleUnpin() {
+        dispatch('unpinpost', {
+			post_id: post.post_id
+		});
+    }
+
+    function handleEdit() {
+        dispatch('editpost', {
+			post: post
+		});
+    }
+
+    let postLink = "/me/c/" + post.class_id + "/p/" + post.post_id
     $: {
-        if (user_has_saved) {
-            swap_not_saved = "swap-off"
-            swap_saved = "swap-on"
-        }
-        else {
-            swap_not_saved = "swap-on"
-            swap_saved = "swap-off"
-        }
-    }
-
-    async function handleSave() {
-        let action
-        if (user_has_saved) {
-            action = "delete"
-        }
-        else {
-            action = "insert"
-        }
-        const response = await fetch('/api/save', {
-            method: "POST",
-            body: JSON.stringify({
-                post_id: post.post_id,
-                action: action
-            })
-        })
-
-        const res = await response.json()
-
-        if (res.success) {
-            user_has_saved = !user_has_saved
-        }
-    }
-
-    let user_has_liked
-    $: user_has_liked = post.user_has_liked
-    let swap_not_liked
-    let swap_liked
-
-    $: {
-        if (user_has_liked) {
-            swap_not_liked = "swap-off"
-            swap_liked = "swap-on"
-        }
-        else {
-            swap_not_liked = "swap-on"
-            swap_liked = "swap-off"
-        }
-    }
-
-    async function handleLike() {
-        let action
-        if (user_has_liked) {
-            action = "delete"
-        }
-        else {
-            action = "insert"
-        }
-        const response = await fetch('/api/like', {
-            method: "POST",
-            body: JSON.stringify({
-                post_id: post.post_id,
-                action: action
-            })
-        })
-
-        const res = await response.json()
-
-        if (res.success) {
-            user_has_liked = !user_has_liked
-        }
-    }
-
-    let postLink = "/c/" + post.class_id + "/p/" + post.post_id
-    $: {
-        postLink = "/c/" + post.class_id + "/p/" + post.post_id
-        if (postType == "draft" || postType == "pending") {
+        postLink = "/me/c/" + post.class_id + "/p/" + post.post_id
+        if (postType == "draft" || postType == "pending" || postType == "post_page") {
             postLink = "#"
         }
     }
@@ -123,7 +91,7 @@
 </script>
 
 <div class="bg-base-300 w-[95%] max-w-screen-lg rounded-lg mx-auto my-3">
-    {#if (post.is_pinned && postType=="class_page") }
+    {#if (post.is_pinned && postType=="class_page")}
         <div class="w-full h-6 bg-base-300 flex items-center px-5 pt-6 pb-4 rounded-t-lg text-xs font-bold text-gray-600">
             <div class="badge text-gray-600 text-xs">
                 <i class="fa-solid fa-thumbtack fa-sm mt-[0.2rem] mr-2"></i>
@@ -132,25 +100,32 @@
         </div>
     {:else if postType!="class_page"}
         <div class="w-full h-6 bg-base-300 flex items-center px-5 pt-6 pb-5 rounded-t-lg text-xs font-bold text-gray-600">
-            <div class="badge text-gray-600 text-xs">
+            <a href={"/me/c/"+post.class_id}><div class="badge text-gray-600 text-xs">
                 {post.class_name.toUpperCase()}
-            </div>
+            </div></a>
+            {#if postType=="post_page" && post.is_pinned}
+                <div class="badge text-gray-600 text-xs ml-1">
+                    <i class="fa-solid fa-thumbtack fa-sm mt-[0.2rem] mr-2"></i>
+                    PINNED POST
+                </div>
+            {/if}
         </div>
     {:else}
         <div class="w-full h-6 bg-base-300 rounded-t-lg">
         </div>
     {/if}
+
     
     <div class="flex px-6 pb-6">
-        <div class="h-full w-fit pr-6 flex flex-col justify-center">
-            <div class="my-1">
-                <Avatar url={post.op_avatar_url} username={post.op_display_name} size="60"/>
+        <div class="h-full w-24 pr-6 flex flex-col justify-center flex-shrink-0">
+            <div class="my-1 w-full flex justify-center">
+                <Avatar url={post.op_avatar_url} username={post.op_display_name} size="60" supabase={data.supabase}/>
             </div>
             
             {#if postType!="draft" && postType!="pending"}
-                <label class="swap mt-6 mb-1 swap-active" on:click={handleLike}>
-                    <i class="fa-regular fa-heart fa-xl {swap_not_liked}"></i>
-                    <i class="fa-solid fa-heart fa-xl {swap_liked}" style="color: #d1083b;"></i>
+                <label class="swap mt-6 mb-1 {post.user_has_liked ? "swap-active" : ""}" on:click={()=>handleLike(post.post_id)}>
+                    <i class="fa-regular fa-heart fa-xl swap-off"></i>
+                    <i class="fa-solid fa-heart fa-xl swap-on" style="color: #d1083b;"></i>
                 </label>
                 <span class="font-semibold block pt-1 w-full text-center">
                     {post.like_count}
@@ -158,13 +133,13 @@
             {/if}
         </div>
 
-        <a href={postLink}>
+        <a data-sveltekit-reload href={postLink}>
             <div class="mr-2 mb-2 overflow-hidden relative">
                 <!-- <div class="absolute top-0 left-0 z-10 w-full h-full bg-gradient-to-t from-base-300"></div> -->
                 <h3 class="text-lg font-semibold">{post.title}</h3> 
 
                 <div>
-                    {#if postType!="pending"}
+                    {#if postType!="pending" && post.op_anon_status=="none"}
                         <div class="badge badge-primary text-gray-100 text-xs font-bold my-2">
                             {post.op_role}
                         </div>  
@@ -192,19 +167,26 @@
 
     <div class="w-full h-10 bg-base-200 flex items-center p-6 rounded-b-lg">
         {#if postType!="draft" && postType!="pending"}
-            <div class="flex items-center mr-3 btn-ghost p-1 rounded-lg">
-                <a href={postLink}>
+            {#if postType == "post_page"}
+                <div class="flex items-center mr-3 p-1 rounded-lg">
                     <i class="fa-regular fa-message pt-[0.1rem]"></i> 
                     <span class="pl-2 text-sm">{post.comment_count} Comments</span>
-                </a>
-            </div>
+                </div>
+            {:else}
+                <div class="flex items-center mr-3 btn-ghost p-1 rounded-lg">
+                    <a data-sveltekit-reload href={postLink}>
+                        <i class="fa-regular fa-message pt-[0.1rem]"></i> 
+                        <span class="pl-2 text-sm">{post.comment_count} Comments</span>
+                    </a>
+                </div>
+            {/if}
             <div class="flex items-center mr-1 btn-ghost p-1 rounded-lg">
-                <label class="swap swap-active" on:click={handleSave}>
+                <label class="swap {post.user_has_saved ? "swap-active" : ""}" on:click={()=>handleSave(post.post_id)}>
                     <!-- <input type="checkbox" /> -->
-                    <i class="fa-regular fa-bookmark {swap_not_saved} pt-[0.1rem]"></i>
-                    <i class="fa-solid fa-bookmark {swap_saved} pt-[0.1rem]"></i>
-                    <span class="pl-[1.35rem] text-sm {swap_not_saved}">Save</span>
-                    <span class="pl-[1.35rem] text-sm {swap_saved}">Saved</span>
+                    <i class="fa-regular fa-bookmark swap-off pt-[0.1rem]"></i>
+                    <i class="fa-solid fa-bookmark swap-on pt-[0.1rem]"></i>
+                    <span class="pl-[1.35rem] text-sm swap-off">Save</span>
+                    <span class="pl-[1.35rem] text-sm swap-on">Saved</span>
                 </label>
             </div>
         {/if}
@@ -217,20 +199,20 @@
                 </label>
                 <ul tabindex="0" class="dropdown-content menu p-1 shadow bg-neutral rounded-box text-sm">
                     {#if postType=="draft"}
-                        <li><button on:click={() => clickButton("toggle_edit_modal")}>Edit</button></li>
+                        <li><button on:click={handleEdit}>Edit</button></li>
                     {/if}
                     {#if (user_role != "student" || isOP)}
-                        <li><button on:click={() => clickButton("toggle_delete_modal")}>Delete</button></li>
+                        <li><button on:click={handleDelete}>Delete</button></li>
                     {/if}
                     {#if postType=="pending"}
-                        <li><button on:click={() => clickButton("submit_approval_btn")}>Approve</button></li>
+                        <li><button on:click={handleApprove}>Approve</button></li>
                     {/if}
-                    {#if postType=="class_page"}
+                    {#if postType=="class_page" || postType=="post_page"}
                         {#if user_role != "student"}
                             {#if post.is_pinned}
-                                <li><button on:click={() => clickButton("submit_unpin_btn")}>Unpin</button></li>
+                                <li><button on:click={handleUnpin}>Unpin</button></li>
                             {:else}
-                                <li><button on:click={() => clickButton("submit_pin_btn")}>Pin</button></li>
+                                <li><button on:click={handlePin}>Pin</button></li>
                             {/if}
                             <!-- <li><a>Lock</a></li>
                             <li><a>Archive</a></li> -->
@@ -242,45 +224,11 @@
     </div>
 </div>
 
-<label for="delete_modal" id="toggle_delete_modal" class="hidden"></label>
 
-<Modal modalId="delete_modal">
-    <h3 class="font-bold text-lg">Delete Post</h3>
-    <p class="mt-3">
-        Are you sure you want to delete this post permanently?
-    </p>  
 
-    <div class="modal-action">
-        <button class="btn btn-primary" on:click={()=>clickButton("toggle_delete_modal")}>Cancel</button>
-        <button class="btn" on:click={()=>clickButton("submit_delete_btn")}>Delete</button>
-    </div>
-</Modal>
 
-<form action="?/approve" method="POST">
-    <input name="post_id" value={post.post_id} class="hidden">
-    <button type="submit" class="hidden" id="submit_approval_btn"></button>
-</form>
 
 <!-- <form action="?/edit" method="POST">
     <input name="post_id" value={post.post_id} class="hidden">
     <button type="submit" class="hidden" id="submit_approval_btn"></button>
 </form> -->
-
-<form action="?/delete" method="POST">
-    <input name="post_id" value={post.post_id} class="hidden">
-    <button type="submit" class="hidden" id="submit_delete_btn"></button>
-</form>
-
-<form action="?/pin" method="POST">
-    <input name="post_id" value={post.post_id} class="hidden">
-    <button type="submit" class="hidden" id="submit_pin_btn"></button>
-</form>
-
-<form action="?/unpin" method="POST">
-    <input name="post_id" value={post.post_id} class="hidden">
-    <button type="submit" class="hidden" id="submit_unpin_btn"></button>
-</form>
-
-{#if postType=="draft"}
-    <label for="edit_modal" id="toggle_edit_modal" class="hidden"></label>
-{/if}

@@ -18,12 +18,14 @@
         <a class="btn btn-ghost" href="/login">Log In</a>
         {:else}
         <div class="dropdown dropdown-hover dropdown-end mr-3">
-            <Avatar url={user.avatar_url} username={user.full_name} size="40"/>
+            <div class="w-10">
+                <Avatar url={user.avatar_url} username={user.full_name} size="40" supabase={data.supabase}/>
+            </div>
             
             <ul class="dropdown-content p-2 menu menu-xs shadow bg-base-200 rounded-box w-52">
                 <p class="mx-4 my-2 font-bold">{user.username}</p>
                 <div class="divider m-0"></div>
-                <li><a>Account Settings</a></li>
+                <li><a data-sveltekit-reload href="/edit-profile">Edit Profile</a></li>
                 <form action="/logout" method="POST">
                     <li><button type="submit">Log Out</button></li>
                 </form>

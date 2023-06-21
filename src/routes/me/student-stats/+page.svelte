@@ -46,7 +46,9 @@
         {#if selected == instructor.class_id}
             <div class="bg-base-300 w-[95%] max-w-screen-lg rounded-lg mx-auto my-1 flex items-center justify-between py-3 px-6">
                 <div class="flex items-center">
-                    <Avatar url={instructor.avatar_url} username={instructor.display_name} size="50"/>
+                    <div class="w-12">
+                        <Avatar url={instructor.avatar_url} username={instructor.display_name} size="50" supabase={data.supabase}/>
+                    </div>
                     <span class="p-3 ml-4 font-semibold text-lg truncate">{instructor.display_name}</span>
                     {#if data.session.user.id == instructor.user_id}
                         <div class="badge badge-accent badge-outline mr-4">You</div>
@@ -77,7 +79,9 @@
         {#if selected == moderator.class_id}
             <div class="bg-base-300 w-[95%] max-w-screen-lg rounded-lg mx-auto my-1 flex items-center justify-between py-3 px-6">
                 <div class="flex items-center">
-                    <Avatar url={moderator.avatar_url} username={moderator.display_name} size="50"/>
+                    <div class="w-12">
+                        <Avatar url={moderator.avatar_url} username={moderator.display_name} size="50" supabase={data.supabase}/>
+                    </div>
                     <span class="p-3 ml-4 font-semibold text-lg truncate">{moderator.display_name}</span>
                     {#if data.session.user.id == moderator.user_id}
                         <div class="badge badge-accent badge-outline mr-4">You</div>
@@ -108,7 +112,9 @@
         {#if selected == student.class_id}
             <div class="bg-base-300 w-[95%] max-w-screen-lg rounded-lg mx-auto my-1 flex items-center justify-between py-3 px-6">
                 <div class="flex items-center">
-                    <Avatar url={student.avatar_url} username={student.display_name} size="50"/>
+                    <div class="w-12">
+                        <Avatar url={student.avatar_url} username={student.display_name} size="50" supabase={data.supabase}/>
+                    </div>
                     <span class="p-3 ml-4 font-semibold text-lg truncate">{student.display_name}</span>
                     {#if data.session.user.id == student.user_id}
                         <div class="badge badge-accent badge-outline mr-4">You</div>
