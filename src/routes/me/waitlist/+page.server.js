@@ -29,9 +29,26 @@ export const load = async ({ locals, params }) => {
     }
     else if(posts){ 
         for (let i=0; i<posts?.length; i++) {
-            posts[i].op_id = ""
+            if(posts[i].op_id != session.user.id) {
+                posts[i].op_id = ""
+            }
             
             if (posts[i].op_anon_status != 'none') {
+                if(posts[i].op_anon_status == 'partial') {
+                    const {data: user_role, error:err_role} = await locals.supabase
+                        .from('user_class')
+                        .select('role')
+                        .eq('user_id', session.user.id)
+                        .eq('class_id', posts[i].class_id)
+                    if (err_role) {
+                        console.log(err_role)
+                    }
+
+                    if (user_role[0].role == "instructor" || posts[i].op_id == session.user.id) {
+                        posts[i].author_name = posts[i].op_display_name
+                        console.log(posts[i].author_name)
+                    }
+                }
                 posts[i].op_display_name = posts[i].op_pseudonym
                 posts[i].op_avatar_url = ""
             }
@@ -48,7 +65,25 @@ export const load = async ({ locals, params }) => {
     }
     else if(comments){ 
         for (let i=0; i<comments?.length; i++) {
+            if(comments[i].op_id != session.user.id) {
+                comments[i].op_id = ""
+            }
             if (comments[i].op_anon_status != 'none') {
+                if(comments[i].op_anon_status == 'partial') {
+                    const {data: user_role, error:err_role} = await locals.supabase
+                        .from('user_class')
+                        .select('role')
+                        .eq('user_id', session.user.id)
+                        .eq('class_id', comments[i].class_id)
+                    if (err_role) {
+                        console.log(err_role)
+                    }
+
+                    if (user_role[0].role == "instructor" || comments[i].op_id == session.user.id) {
+                        comments[i].author_name = comments[i].op_display_name
+                        console.log(comments[i].author_name)
+                    }
+                }
                 comments[i].op_display_name = comments[i].op_pseudonym
                 comments[i].op_avatar_url = ""
             }

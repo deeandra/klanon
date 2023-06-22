@@ -1,6 +1,7 @@
 <script>
 	import Avatar from "$lib/components/Avatar.svelte";
 	import Modal from "$lib/components/Modal.svelte";
+    import Reply from "$lib/components/Reply.svelte";
     import { createEventDispatcher } from 'svelte';
 
     const dispatch = createEventDispatcher();
@@ -94,6 +95,37 @@
         }
     }
 
+    let badgeColor
+    if (comment.op_role == "student") {
+        badgeColor = ""
+    }
+    else if (comment.op_role == "moderator") {
+        badgeColor = "badge-primary"
+    }
+    else {
+        badgeColor = "badge-secondary"
+    }
+
+    let seeAuthor = false
+    function handleClickSeeAuthor() {
+        seeAuthor = true
+    }
+
+    function handleUnclickSeeAuthor() {
+        seeAuthor = false
+    }
+
+    function handleLikeReply(event) {
+        dispatch('likecomment', {
+			comment_id: event.detail.comment_id
+		});
+    }
+
+    function handleDeleteReply(event) {
+        dispatch('deletecomment', {
+			comment_id: event.detail.comment_id
+		});
+    }
 </script>
 
 <div class="{commentType=="pending" ? "bg-base-300" : "bg-base-200"} w-[95%] max-w-screen-lg rounded-lg mx-auto my-3">
@@ -156,20 +188,25 @@
 
         <div class="mr-2 mb-2 flex-grow">
             <div class="flex justify-between">
-                <div>
-                    {#if commentType!="pending" && comment.op_anon_status=="none"}
-                        <div class="badge badge-primary text-gray-100 text-xs font-bold my-2">
+                <div class="flex items-center my-1">
+                    {#if commentType!="pending" && comment.op_anon_status=="none" && comment.op_role!="student"}
+                    <div class="badge {badgeColor} text-gray-100 text-xs mr-2">
                             {comment.op_role}
                         </div>  
                     {/if}
+ 
+                    {#if data.session.user.id == comment.op_id}
+                        <div class="badge badge-accent badge-outline text-xs mr-2">You</div>
+                    {/if}
 
                     {#if comment.op_anon_status != "none"}
-                        <div class="badge badge-accent badge-outline">anon</div>
+                        <div class="badge badge-accent badge-outline text-xs mr-2">anon</div>
                     {/if}
-                    
-                    {#if data.session.user.id == comment.op_id}
-                        <div class="badge badge-accent badge-outline">You</div>
+
+                    {#if comment.op_anon_status == "partial" && (user_role=="instructor")}
+                        <div class="badge badge-accent badge-outline text-xs uppercase font-semibold" on:mousedown={handleClickSeeAuthor} on:mouseup={handleUnclickSeeAuthor}>Click to See Author's Name</div>
                     {/if}
+                   
                 </div>
 
                 {#if commentType!="pending"}
@@ -209,7 +246,7 @@
             <div>
                 <div class="text-gray-600 max-w-md truncate">
                     {commentType=="pending" ? "Requested " : "Posted"}
-                    by {comment.op_display_name} on {commentDate}
+                    by {seeAuthor ? comment.author_name : comment.op_display_name} on {commentDate}
                 </div>     
             </div>
             <p>{@html decodeURIComponent(comment.content).replace(/\n/g, '<br>')}
@@ -222,58 +259,9 @@
             <div class="{repliesDiv} ">
                 {#each data.comments as reply(reply.comment_id)}
                     {#if reply.parent_id == comment.comment_id}
-                    <div class="flex py-4">
-                        <div class="h-full w-16 pr-6 flex flex-col justify-center flex-shrink-0">
-                            <div class="my-1  w-full flex justify-center">
-                                <Avatar url={reply.op_avatar_url} username={reply.op_display_name} size="40" supabase={data.supabase}/>
-                            </div>
-                            <label class="swap mt-6 mb-1 
-                            {reply.user_has_liked ? "swap-active" : ""}" on:click={()=>handleLike(reply.comment_id)}>
-                                <i class="fa-regular fa-heart fa-xl swap-off"></i>
-                                <i class="fa-solid fa-heart fa-xl swap-on" style="color: #d1083b;"></i>
-                            </label>
-                            <span class="font-semibold block pt-1 w-full text-center">
-                                {reply.like_count}
-                            </span>
-                        </div>
-                
-                        <div class="mb-2 flex-grow">
-                            <div class="flex justify-between">
-                                <div>
-                                    <div class="badge badge-primary text-gray-100 text-xs font-bold my-2">
-                                        {comment.op_role}
-                                    </div> 
-                
-                                    {#if comment.op_anon_status != "none"}
-                                        <div class="badge badge-accent badge-outline">anon</div>
-                                    {/if}
-                                    
-                                    {#if data.session.user.id == comment.op_id}
-                                        <div class="badge badge-accent badge-outline">You</div>
-                                    {/if}
-                                </div>
-                
-                                <div class="dropdown dropdown-hover dropdown-bottom dropdown-end">
-                                    <label tabindex="0" class="btn btn-ghost btn-xs m-1">
-                                        <i class="fa-solid fa-ellipsis fa-lg pt-[0.1rem] px-1"></i>
-                                    </label>
-                                    <ul tabindex="0" class="dropdown-content menu p-1 shadow bg-neutral rounded-box text-sm">
-                                        {#if (user_role != "student" || isOP)}
-                                            <li><button on:click={() => handleDelete(reply.comment_id)}>Delete</button></li>
-                                        {/if}
-                                    </ul>
-                                </div>
-                            </div>
-                
-                            <div>
-                                <div class="text-gray-600 max-w-md truncate">
-                                    Posted by {reply.op_display_name} on {new Date(reply.updated_at).toLocaleDateString() + " " + new Date(reply.updated_at).toLocaleTimeString()}
-                                </div>     
-                            </div>
-                            <p class="max-w-full">{@html decodeURIComponent(reply.content).replace(/\n/g, '<br>')} A route like src/routes/archive/[page] would match /archive/3, but it would also match /archive/potato. We don't want that. You can ensure that route parameters are well-formed by adding a matcher — which takes the parameter string ("3" or "potato") and returns true if it is valid — to your
-                            </p>
-                        </div>
-                    </div>
+                        <Reply {reply} supabase={data.supabase} {user_role} session_user_id={data.session.user.id}
+                        on:likecomment={handleLikeReply}
+                        on:deletecomment={handleDeleteReply}></Reply>
                     {/if}
                 {/each}
 

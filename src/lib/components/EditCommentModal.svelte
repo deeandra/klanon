@@ -152,7 +152,7 @@
     <div class="mt-2 text-gray-500 font-semibold text-sm">
         Anonymous mode  
         {#if comment?.user_anon_status}
-        <div class="badge badge-primary font-bold badge-outline uppercase">
+        <div class="badge border-gray-100 text-gray-100 badge-outline">
             {comment?.user_anon_status}
         </div>
         {/if}
@@ -181,7 +181,7 @@
         <span class="text-gray-500 font-semibold">Commenting as</span>
         <div class="badge badge-primary ml-2">{display_name}</div>
         {#if anon_status!="none"}
-            <div class="badge badge-accent badge-outline ml-2">anon</div>
+            <div class="badge border-gray-100 text-gray-100 badge-outline ml-2">anon</div>
         {/if}
     </div>
 

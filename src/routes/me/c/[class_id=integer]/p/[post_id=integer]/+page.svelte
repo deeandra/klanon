@@ -33,10 +33,16 @@
 
     $: parent_comment = data.comments[0]
 
+    function handleAddComment() {
+        parent_comment = ""
+        const button = document.getElementById("toggle_comment_modal")
+        button.click()
+    }
+
     function handleClickReply(event) {
         parent_comment = event.detail.parent_comment
         // console.log("PARENT:" + parent_id)
-        const button = document.getElementById("toggle_reply_modal")
+        const button = document.getElementById("toggle_comment_modal")
         button.click()
     }
 
@@ -165,12 +171,13 @@
 </div>
 <div class="bg-base-100 text-gray-500 w-[14.3rem] my-4 mr-4 rounded-lg py-2 hidden lg:block"></div>
 
-<label for="create_comment_modal" class="fixed z-20 btn btn-primary bottom-6 right-6 text-white py-2 px-4 rounded-full shadow-md">
+<button class="fixed z-20 btn btn-primary bottom-6 right-6 text-white py-2 px-4 rounded-full shadow-md" on:click={handleAddComment}>
     Add a Comment
-</label>
-<label for="create_reply_modal" class="hidden" id="toggle_reply_modal"></label>
-<CreateCommentModal modalId="create_comment_modal" {data} {form}/>
-<CreateCommentModal mode="" modalId="create_reply_modal" {data} {form} {parent_comment} />
+</button>
+<label for="create_comment_modal" id="toggle_comment_modal" class="hidden"></label>
+<!-- <label for="create_reply_modal" class="hidden" id="toggle_reply_modal"></label> -->
+<CreateCommentModal modalId="create_comment_modal" {data} {form} {parent_comment}/>
+<!-- <CreateCommentModal modalId="create_reply_modal" {data} {form} {parent_comment} /> -->
 
 <form action="?/likecomment" method="POST">
     <input name="comment_id" id="like_comment_id_input" class="hidden">

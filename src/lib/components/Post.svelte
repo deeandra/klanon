@@ -22,14 +22,14 @@
     let isOP
     $: {
         isOP = false;
-        if (post.op_id) {
+        if (post?.op_id == data.session.user.id) {
             isOP = true;
         }
     }
 
     let user_role
     $: {
-        user_role = data.user_classes.find(obj => obj.class_id == post.class_id).role
+        user_role = data.user_classes?.find(obj => obj?.class_id == post?.class_id).role
     }
 
 
@@ -76,9 +76,9 @@
 		});
     }
 
-    let postLink = "/me/c/" + post.class_id + "/p/" + post.post_id
+    let postLink = "/me/c/" + post?.class_id + "/p/" + post?.post_id
     $: {
-        postLink = "/me/c/" + post.class_id + "/p/" + post.post_id
+        postLink = "/me/c/" + post?.class_id + "/p/" + post?.post_id
         if (postType == "draft" || postType == "pending" || postType == "post_page") {
             postLink = "#"
         }
@@ -88,10 +88,31 @@
         const button = document.getElementById(btn_id)
         button.click()
     }
+
+    let badgeColor
+    if (post.op_role == "student") {
+        badgeColor = ""
+    }
+    else if (post.op_role == "moderator") {
+        badgeColor = "badge-primary"
+    }
+    else {
+        badgeColor = "badge-secondary"
+    }
+
+    let seeAuthor = false
+    function handleClickSeeAuthor() {
+        seeAuthor = true
+    }
+
+    function handleUnclickSeeAuthor() {
+        seeAuthor = false
+    }
+
 </script>
 
 <div class="bg-base-300 w-[95%] max-w-screen-lg rounded-lg mx-auto my-3">
-    {#if (post.is_pinned && postType=="class_page")}
+    {#if (post?.is_pinned && postType=="class_page")}
         <div class="w-full h-6 bg-base-300 flex items-center px-5 pt-6 pb-4 rounded-t-lg text-xs font-bold text-gray-600">
             <div class="badge text-gray-600 text-xs">
                 <i class="fa-solid fa-thumbtack fa-sm mt-[0.2rem] mr-2"></i>
@@ -100,10 +121,10 @@
         </div>
     {:else if postType!="class_page"}
         <div class="w-full h-6 bg-base-300 flex items-center px-5 pt-6 pb-5 rounded-t-lg text-xs font-bold text-gray-600">
-            <a href={"/me/c/"+post.class_id}><div class="badge text-gray-600 text-xs">
-                {post.class_name.toUpperCase()}
+            <a href={"/me/c/"+post?.class_id}><div class="badge text-gray-600 text-xs">
+                {post?.class_name.toUpperCase()}
             </div></a>
-            {#if postType=="post_page" && post.is_pinned}
+            {#if postType=="post_page" && post?.is_pinned}
                 <div class="badge text-gray-600 text-xs ml-1">
                     <i class="fa-solid fa-thumbtack fa-sm mt-[0.2rem] mr-2"></i>
                     PINNED POST
@@ -119,50 +140,53 @@
     <div class="flex px-6 pb-6">
         <div class="h-full w-24 pr-6 flex flex-col justify-center flex-shrink-0">
             <div class="my-1 w-full flex justify-center">
-                <Avatar url={post.op_avatar_url} username={post.op_display_name} size="60" supabase={data.supabase}/>
+                <Avatar url={post?.op_avatar_url} username={post?.op_display_name} size="60" supabase={data.supabase}/>
             </div>
             
             {#if postType!="draft" && postType!="pending"}
-                <label class="swap mt-6 mb-1 {post.user_has_liked ? "swap-active" : ""}" on:click={()=>handleLike(post.post_id)}>
+                <label class="swap mt-6 mb-1 {post?.user_has_liked ? "swap-active" : ""}" on:click={()=>handleLike(post?.post_id)}>
                     <i class="fa-regular fa-heart fa-xl swap-off"></i>
                     <i class="fa-solid fa-heart fa-xl swap-on" style="color: #d1083b;"></i>
                 </label>
                 <span class="font-semibold block pt-1 w-full text-center">
-                    {post.like_count}
+                    {post?.like_count}
                 </span>
             {/if}
         </div>
+        
+        <div class="mr-2 mb-2 overflow-hidden relative">
+            <!-- <div class="absolute top-0 left-0 z-10 w-full h-full bg-gradient-to-t from-base-300"></div> -->
+            <h3 class="text-lg font-semibold">{post.title}</h3> 
 
-        <a data-sveltekit-reload href={postLink}>
-            <div class="mr-2 mb-2 overflow-hidden relative">
-                <!-- <div class="absolute top-0 left-0 z-10 w-full h-full bg-gradient-to-t from-base-300"></div> -->
-                <h3 class="text-lg font-semibold">{post.title}</h3> 
+            <div class="flex items-center my-1">
+                {#if postType!="pending" && post.op_anon_status=="none" && post.op_role!="student"}
+                    <div class="badge {badgeColor} text-gray-100 text-xs mr-2">
+                        {post.op_role}
+                    </div>  
+                {/if}
+                {#if data.session.user.id == post.op_id}
+                    <div class="badge badge-accent badge-outline text-xs mr-2">You</div>
+                {/if}
+                {#if post.op_anon_status != "none"}
+                    <div class="badge badge-accent badge-outline text-xs mr-2">anon</div>
+                {/if}
+                {#if post.op_anon_status == "partial" && (user_role=="instructor")}
+                    <div class="badge badge-accent badge-outline text-xs uppercase font-semibold" on:mousedown={handleClickSeeAuthor} on:mouseup={handleUnclickSeeAuthor}>Click to See Author's Name</div>
+                {/if}
+            </div>
 
-                <div>
-                    {#if postType!="pending" && post.op_anon_status=="none"}
-                        <div class="badge badge-primary text-gray-100 text-xs font-bold my-2">
-                            {post.op_role}
-                        </div>  
-                    {/if}
-                    {#if data.session.user.id == post.op_id}
-                        <div class="badge badge-accent badge-outline">You</div>
-                    {/if}
-                    {#if post.op_anon_status != "none"}
-                        <div class="badge badge-accent badge-outline">anon</div>
-                    {/if}
-                </div>
-
+            <a data-sveltekit-reload href={postLink}>
                 <div class="flex items-center">
                     <div class="text-gray-600 max-w-md truncate">
                         {postType=="pending" ? "Requested " : "Posted"}
-                        by {post.op_display_name} on {postDate}
+                        by {seeAuthor ? post.author_name : post.op_display_name} on {postDate}
                     </div>     
                     
                 </div>
                 <p>{@html decodeURIComponent(post.content).replace(/\n/g, '<br>')}
                 </p>
-            </div>
-        </a>
+            </a>
+        </div>
     </div>
 
     <div class="w-full h-10 bg-base-200 flex items-center p-6 rounded-b-lg">

@@ -158,6 +158,27 @@
     }
 
 
+    // let member_name_to_remove
+    // let member_id_to_remove
+    // function handleRemoveMember(member) {
+    //     member_id_to_remove = member.user_id
+    //     member_name_to_remove = member.display_name
+
+    //     const checkbox = document.getElementById("remove_member_modal")
+    //     checkbox.checked = true
+    // }
+
+    // function handleCancelRemoveMember() {
+    //     member_id_to_remove = ""
+    //     member_name_to_remove = ""
+
+    //     const checkbox = document.getElementById("remove_member_modal")
+    //     checkbox.checked = false
+    // }
+
+    // function handleConfirmRemoveMember() {
+    //     const button = document.getElementById("submit_remove_member_btn")
+    // }
 </script>
 
 
@@ -256,6 +277,9 @@
                     {#if data.thisClass.user_class[0].role == "instructor"}
                         <li><label on:click={()=>changeRole(member)}>Change Role</label></li>
                     {/if}
+                    <!-- {#if data.thisClass.user_class[0].role != "student"}
+                        <li><label for="remove_member_modal">Remove</label></li>
+                    {/if} -->
                 </ul>
               </div>
         </div>
@@ -277,6 +301,24 @@
     </form>
 </Modal>
 
+<!-- {#if data.thisClass.user_class[0].role != "student"}
+<Modal modalId="remove_member_modal" >
+    <div class="badge badge-accent badge-outline uppercase font-semibold mb-3">{data.thisClass.name}</div>
+    <p class="mb-3">Are you sure you want to remove {member_name_to_remove} from this class?</p>
+
+    <div class="modal-action">
+        <button class="btn btn-primary" on:click={handleCancelRemoveMember}>Cancel</button>
+        <button class="btn" on:click={handleRemoveMember}>Remove</button>
+    </div>
+</Modal>
+
+<form action="?/removemember" method="POST">
+    <input name="user_id" id="remove_member_id_input" class="hidden">
+    <button type="submit" class="hidden" id="submit_remove_member_btn"></button>
+</form>
+{/if} -->
+
+{#if data.thisClass.user_class[0].role == "instructor"}
 <label for="change_role_modal" id="label_change_role_modal"></label>
 <Modal modalId="change_role_modal">
     <form action="?/changedisplayname" method="POST">
@@ -295,17 +337,19 @@
         </div>
     </form>
 </Modal>
+{/if}
 
-<Modal modalId="edit_class_modal" >
-    <h3 class="font-bold text-2xl mb-1">Edit Class</h3> 
+{#if data.thisClass.user_class[0].role != "student"}
+<Modal modalId="edit_class_modal">
+    <h3 class="font-bold text-2xl">Edit Class</h3> 
     <form action="?/editclass" method="POST">
         <div class="form-control w-full">
-            <div class="w-full flex justify-between items-center my-2">
-                <div class="w-48 aspect-w-1 aspect-h-1">
-                <Avatar url={class_avatar_url ? class_avatar_url : data.thisClass.avatar_url} username={data.thisClass.name} size="100" supabase={data.supabase}></Avatar>
+            <div class="w-full flex flex-col justify-between items-center mb-1">
+                <div class="w-48 flex justify-center">
+                    <Avatar url={class_avatar_url ? class_avatar_url : data.thisClass.avatar_url} username={data.thisClass.name} size="130" supabase={data.supabase}></Avatar>
                 </div>
-                <div class="flex-grow ml-6">
-                    <label class="btn" for="single">
+                <div class="w-full text-center">
+                    <label class="btn btn-outline" for="single">
                         {uploading ? 'Uploading ...' : 'Upload avatar'}
                     </label>
                 </div>
@@ -340,13 +384,24 @@
             <textarea name="description" class="textarea bg-base-200 w-full text-base" placeholder="Type Here" value={data.thisClass.description}></textarea>
             
             <input name="class_id" value={data.thisClass.id} class="hidden">
-
-            <div class="modal-action">
-                <button type="submit" class="btn">Save</button>
+            
+            <div class="flex justify-between items-center mt-4 mb-2">
+                <div class="flex flex-col">
+                    <span class="label-text mt-3 ml-1">
+                        Enable Automatic Moderation System
+                    </span> 
+                    <input type="checkbox" class="toggle my-2 ml-1" checked />
+                </div>
+                <button type="submit" class="btn w-32 mt-3">Save</button>
             </div>
+            
+            <!-- <div class="modal-action">
+                <button type="submit" class="btn">Save</button>
+            </div> -->
         </div>
     </form>
 </Modal>
+{/if}
 
 <label for="delete_modal" id="toggle_delete_modal" class="hidden"></label>
 

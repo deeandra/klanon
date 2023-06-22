@@ -127,7 +127,7 @@
         <span>Posting as</span>
         <div class="badge badge-primary ml-2">{display_name}</div>
         {#if anon_status!="none"}
-            <div class="badge badge-primary badge-outline font-bold ml-2">anon</div>
+            <div class="badge border-gray-100 text-gray-100 badge-outline ml-2">anon</div>
         {/if}
     </div>
     
