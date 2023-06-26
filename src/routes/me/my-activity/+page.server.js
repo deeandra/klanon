@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { MODEL_API_URL } from '$env/static/public'
+import { MODEL_API_URL } from '$env/static/private'
 
 /* eslint-disable no-unused-vars */
 export const load = async ({ locals, params }) => {
