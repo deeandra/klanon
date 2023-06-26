@@ -39,27 +39,26 @@
 
 </script>
 
-<div>
-	{#if url && !useRandom}
-        <!-- <div class="w-[{size}] h-[{size}] mask mask-squircle bg-white flex-shrink-0">
-            <img src={url} alt="Avatar" class="object-cover w-full h-full">
-        </div>
-         -->
-         <!-- <div class="h-[{size}px] w-[{size}px] overflow-hidden flex">
-        <img src={public_url.publicUrl} on:error={handleError} alt="Avatar" class="object-cover">
-        </div> -->
-        <img src={public_url.publicUrl} alt="Avatar" height={size} width={size} on:error={handleError} class="mask mask-squircle min-h-[{size}px]">
-         <!-- <div class="mask mask-squircle">
-        <div class="mask mask-squircle h-[{size}px] w-[{size}px]" style="background-image: url('{public_url.publicUrl}');background-repeat:no-repeat;background-size:cover;background-position: center;"></div> -->
 
-	{:else}
-        <!-- <div class="w-[{size}] h-[{size}] mask mask-squircle bg-white flex-shrink-0">
-            <img src={randomAvaUrl} alt="Avatar" class="max-w-full max-h-full">
-        </div> -->
-        <img src={randomAvaUrl} alt="Avatar" height={size} width={size} class="mask mask-squircle min-h-[{size}px]">
-        <!-- <div class="h-[{size}px] w-[{size}px]" style="background-image:url('{randomAvaUrl}');background-repeat:no-repeat;background-size:cover;"></div> -->
+{#if url && !useRandom}
+    <!-- <div class="w-[{size}] h-[{size}] mask mask-squircle bg-white flex-shrink-0">
+        <img src={url} alt="Avatar" class="object-cover w-full h-full">
+    </div>
+        -->
+        <!-- <div class="h-[{size}px] w-[{size}px] overflow-hidden flex">
+    <img src={public_url.publicUrl} on:error={handleError} alt="Avatar" class="object-cover">
+    </div> -->
+    <img src={public_url.publicUrl} alt="Avatar" height={size} width={size} on:error={handleError} class="mask mask-squircle min-h-[{size}px]" style="background-color:white;">
         <!-- <div class="mask mask-squircle">
-            <div class=" h-[{size}px] w-[{size}px]" style="background-image: url('{public_url.publicUrl}');background-repeat:no-repeat;background-size:cover;background-position: center;"></div>
-        </div> -->
-	{/if}
-</div>
+    <div class="mask mask-squircle h-[{size}px] w-[{size}px]" style="background-image: url('{public_url.publicUrl}');background-repeat:no-repeat;background-size:cover;background-position: center;"></div> -->
+
+{:else}
+    <!-- <div class="w-[{size}] h-[{size}] mask mask-squircle bg-white flex-shrink-0">
+        <img src={randomAvaUrl} alt="Avatar" class="max-w-full max-h-full">
+    </div> -->
+    <img src={randomAvaUrl} alt="Avatar" height={size} width={size} class="mask mask-squircle min-h-[{size}px]" style="background-color:white;">
+    <!-- <div class="h-[{size}px] w-[{size}px]" style="background-image:url('{randomAvaUrl}');background-repeat:no-repeat;background-size:cover;"></div> -->
+    <!-- <div class="mask mask-squircle">
+        <div class=" h-[{size}px] w-[{size}px]" style="background-image: url('{public_url.publicUrl}');background-repeat:no-repeat;background-size:cover;background-position: center;"></div>
+    </div> -->
+{/if}

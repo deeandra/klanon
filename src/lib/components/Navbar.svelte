@@ -1,14 +1,16 @@
 <script>
 	import Avatar from "./Avatar.svelte";
+    import { page } from '$app/stores';
 
     export let data;
 
     let { user } = data
 	$: ({ user } = data)
+    console.log($page.route.id.startsWith('/me'))
 
 </script>
 
-<div class="navbar fixed pt-1 max-h-10 bg-base-100 z-50">
+<div class="navbar fixed pt-1 max-h-10 z-50 {$page.route.id.startsWith('/me') ? "bg-base-100" : ""}">
     <div class="navbar-start">
         <a class="btn btn-ghost normal-case text-xl font-serif mx-2 px-6" href="/">Klanon</a>
     </div>

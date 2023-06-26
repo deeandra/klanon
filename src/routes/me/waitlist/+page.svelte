@@ -75,7 +75,8 @@
 
     {#each uploads as upload(upload.id)}
         {#if upload?.comment_id}
-            <Comment commentData={upload} commentType="pending" {data} on:approvecomment={handleApproveComment}
+            <Comment commentData={upload} commentType="pending" {data} 
+            on:approvecomment={handleApproveComment}
             on:deletecomment={handleDeleteComment}/>
         {:else if upload?.post_id}
             <Post postData={upload} postType="pending" {data} 

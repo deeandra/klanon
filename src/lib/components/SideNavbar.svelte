@@ -30,7 +30,7 @@
             menu_classes[i] = ""
             const regex = new RegExp("^\/me\/" + menu_list[i]);
             if (regex.test(route)) {
-                menu_classes[i] = "bg-base-100 text-white";
+                menu_classes[i] = "bg-accent text-white";
             }
         }
         regexC = new RegExp("^\/me\/c");
@@ -38,7 +38,7 @@
             const userClassIndex = user_classes.findIndex(obj => obj.class_id == parseInt(params.class_id))
             // console.log(userClassIndex)
             if(userClassIndex != -1) {
-                user_classes[userClassIndex].styles = "bg-base-100 text-white";
+                user_classes[userClassIndex].styles = "bg-accent text-white";
             }
         }
     }
@@ -147,16 +147,19 @@
                 </div>
             </li>
         </div>
-        {#each user_classes as user_class(user_class.class_id)}
-            <YourClass {user_class} supabase={data.supabase}/>
-        {/each}
+        <!-- <div class="w-full max-w-full"> -->
+            {#each user_classes as user_class(user_class.class_id)}
+                <YourClass {user_class} supabase={data.supabase}/>
+            {/each}
+
+        <!-- </div> -->
     </ul>
     </nav>
 </div>
 
 
 <Modal modalId="join_modal">
-    <h3 class="font-bold text-lg mb-2">Join a Classroom</h3>
+    <h3 class="font-bold text-lg mb-2 text-white">Join a Classroom</h3>
     <div class="form-control w-full">
         <label class="label mt-1">
             <span class="label-text">Invitation Code</span>
@@ -172,7 +175,7 @@
         <p class="mt-3 text-red-600 text-center">{join_message}</p>
 
         <div class="modal-action">
-            <label class="btn" on:click={handleContinueJoin}>Continue</label>
+            <label class="btn btn-accent" on:click={handleContinueJoin}>Continue</label>
         </div>
     </div>
     <!-- <form action="/me/join" method="POST">
@@ -197,13 +200,13 @@
 
 <Modal modalId="continue-join_modal">
     <!-- <h3 class="font-bold text-lg mb-2">Join a Classroom</h3> -->
-    <p class="pt-4 text-center">You're joining this class:</p> 
+    <p class="pt-4 text-center mb-4">You're joining this class:</p> 
     <div class="flex w-full justify-center">
         <div class="w-32">
             <Avatar url={join_class_avatar_url} username={class_name} supabase={data.supabase}></Avatar>
         </div>
     </div>
-    <h2 class="text-center font-bold text-2xl m-4">{class_name}</h2>
+    <h2 class="text-center font-bold text-2xl m-4 text-white">{class_name}</h2>
     <form action="/me/join/confirm" method="POST">
         <div class="form-control w-full">
             <label class="label mt-1">
@@ -214,14 +217,14 @@
             <input type="hidden" name="class_id" value={class_id} class="input input-bordered w-full" />
 
             <div class="modal-action">
-                <button class="btn">JOIN</button>
+                <button class="btn btn-accent">JOIN</button>
             </div>
         </div>
     </form>
 </Modal>
 
 <Modal modalId="create-class_modal">
-    <h3 class="font-bold text-lg">Create a New Class</h3>
+    <h3 class="font-bold text-lg text-white">Create a New Class</h3>
     <p class="py-4 text-sm">You will automatically be assigned as an instructor when you create a new class. You can change this later by delegating the role to another class member.</p>  
     <form action="/me/create-class" method="POST">
         <div class="form-control w-full">
@@ -254,7 +257,7 @@
             <textarea name="description" class="textarea textarea-bordered w-full text-base" placeholder="Type Here"></textarea>
             
             <div class="modal-action">
-                <button class="btn">Create</button>
+                <button class="btn btn-accent">Create</button>
             </div>
         </div>
     </form>

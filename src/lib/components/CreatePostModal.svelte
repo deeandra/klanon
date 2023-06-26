@@ -35,9 +35,9 @@
         // }
     } 
 
-    let anon_status ="none"
+    let anon_status = form?.body?.anon_status ? form.body.anon_status : "none"
     const generated_pseudonym = generatePseudonym()
-    let pseudonym = generated_pseudonym
+    let pseudonym = form?.body?.pseudonym ? form.body.pseudonym : generated_pseudonym
 
     $: {
         if(anon_status == "none") {
@@ -66,6 +66,8 @@
 
     function handleEdit() {
         abusiveAlertMode = ""
+        anon_status = form?.body?.anon_status
+        pseudonym = form?.body?.pseudonym
         let checkbox = document.getElementById('create_post_modal');
         checkbox.checked = !checkbox.checked;
         pseudonym = form.body.pseudonym
@@ -73,6 +75,10 @@
     }
 
     function handleSendMod() {
+        anon_status = form?.body?.anon_status
+        display_name = form?.body?.pseudonym
+        // console.log(anon_status)
+        // console.log(display_name)
         const button = document.getElementById("send_to_mod_btn")
         button.click()
     }
@@ -102,7 +108,7 @@
 <Modal modalId="create_post_modal" mode="">
     <!-- <h3 class="font-bold text-lg">Posting on <strong>{data.thisClass.name}</strong></h3> -->
     <div class="badge badge-accent badge-outline text-gray-600 font-bold truncate">
-        {"POSTING IN " + data.thisClass.name.toUpperCase()}
+        {"POSTING ON " + data.thisClass.name.toUpperCase()}
     </div>
     <div class="mt-3">Anonymous mode :</div>
     <div class="flex items-center mt-1 mb-2">

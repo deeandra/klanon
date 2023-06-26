@@ -141,7 +141,7 @@
 </script>
 
 
-<div class="flex-1 mt-1">
+<div class="flex-1 mt-1 pb-16">
 
     <Post postData={data.post} postType="post_page" {data} 
     on:save={handleSave} 

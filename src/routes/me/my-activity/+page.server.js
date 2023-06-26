@@ -1,4 +1,5 @@
 import { redirect } from '@sveltejs/kit';
+import { MODEL_API_URL } from '$env/static/public'
 
 /* eslint-disable no-unused-vars */
 export const load = async ({ locals, params }) => {
@@ -116,7 +117,7 @@ export const actions = {
         }
         else{
             try {
-                const res = await fetch("http://127.0.0.1:5000/predict", {
+                const res = await fetch(MODEL_API_URL, {
                     method: "POST",
                     body: formData
                 })
@@ -237,7 +238,7 @@ export const actions = {
         }
         else{
             try {
-                const res = await fetch("http://127.0.0.1:5000/predict", {
+                const res = await fetch(MODEL_API_URL, {
                     method: "POST",
                     body: formData
                 })

@@ -42,8 +42,8 @@
 
     $: pseudonym = post?.op_pseudonym ? post?.op_pseudonym : generated_pseudonym
 
-    let anon_status = post?.op_anon_status
-    let prev_anon_status = post?.op_anon_status
+    let anon_status = form?.body?.anon_status ? form.body.anon_status : post?.op_anon_status
+    let prev_anon_status = form?.body?.anon_status ? form.body.anon_status : post?.op_anon_status
     $: {
         if (prev_anon_status != post?.op_anon_status) {
             anon_status = post?.op_anon_status
@@ -92,7 +92,7 @@
 
 <Modal modalId="edit_post_modal" mode="">
     <div class="badge badge-accent badge-outline text-gray-600 font-bold truncate">
-        {"POSTING IN " + post?.class_name.toUpperCase()}
+        {"POSTING ON " + post?.class_name.toUpperCase()}
     </div>
     <div class="mt-3">Anonymous mode :</div>
     <div class="flex items-center mt-1 mb-2">

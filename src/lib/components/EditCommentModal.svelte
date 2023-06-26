@@ -49,12 +49,27 @@
 
     const generated_pseudonym = generatePseudonym()
 
-    let pseudonym 
+    let pseudonym
 
-    $: pseudonym = comment?.user_pseudonym ? comment?.user_pseudonym : (comment?.op_pseudonym ? comment?.op_pseudonym : generated_pseudonym)
+    $: {
+        if (comment?.user_pseudonym) {
+            pseudonym = form.body.pseudonym
+        }
+        else if (form?.body?.pseudonym) {
+            pseudonym = comment.user_pseudonym
+        }
+        else if (comment?.op_pseudonym) {
+            pseudonym = comment.user_pseudonym
+        }
+        else {
+            generated_pseudonym
+        }
+    }
 
-    let anon_status = comment?.user_anon_status ? comment?.user_anon_status : comment?.op_anon_status
-    let prev_anon_status = comment?.op_anon_status
+
+    let anon_status = form?.body?.anon_status ? form.body.anon_status : (comment?.user_anon_status ? comment?.user_anon_status : comment?.op_anon_status)
+    let prev_anon_status = form?.body?.anon_status ? form.body.anon_status : (comment?.user_anon_status ? comment?.user_anon_status : comment?.op_anon_status)
+
     $: {
         if (prev_anon_status != comment?.op_anon_status) {
             anon_status = comment?.op_anon_status
@@ -106,7 +121,7 @@
         
     {#if !comment?.parent_content}
         <div class="badge badge-accent badge-outline text-gray-600 text-sm font-bold mb-2">
-            {"COMMENTING IN " + comment?.class_name.toUpperCase()}
+            {"COMMENTING ON " + comment?.class_name.toUpperCase()}
         </div>
         <div class="bg-base-100 rounded-lg text-xs font-semibold p-1">
             
@@ -127,7 +142,7 @@
         </div>
     {:else}
         <div class="badge badge-accent badge-outline text-gray-600 text-sm font-bold mb-2">
-            {"COMMENTING IN " + comment?.class_name.toUpperCase()}
+            {"COMMENTING ON " + comment?.class_name.toUpperCase()}
         </div>
         <div class="badge text-xs font-bold text-gray-600">IN REPLY TO</div>
         <div class="bg-base-100 rounded-lg text-xs font-semibold p-1">

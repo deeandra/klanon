@@ -23,6 +23,7 @@
                 students.push(data.students[i])
             }
         }
+        // console.log(students)
     }
 </script>
 
@@ -38,11 +39,11 @@
 
     {#if instructors.some(obj => obj.class_id == selected)}
     <div class="bw-[95%] max-w-screen-lg mx-auto my-1 flex items-center justify-between py-3 px-6">
-        <div class="badge badge-primary font-semibold">INSTRUCTORS</div>
+        <div class="badge badge-secondary font-semibold">INSTRUCTORS</div>
     </div>
     {/if}
 
-    {#each instructors as instructor(instructor.user_id)}
+    {#each instructors as instructor(instructor.user_id+"_"+instructor.class_id)}
         {#if selected == instructor.class_id}
             <div class="bg-base-300 w-[95%] max-w-screen-lg rounded-lg mx-auto my-1 flex items-center justify-between py-3 px-6">
                 <div class="flex items-center">
@@ -71,11 +72,11 @@
 
     {#if moderators.some(obj => obj.class_id == selected)}
     <div class="bw-[95%] max-w-screen-lg mx-auto my-1 flex items-center justify-between py-3 px-6">
-        <div class="badge badge-secondary font-semibold">MODERATORS</div>
+        <div class="badge badge-primary font-semibold">MODERATORS</div>
     </div>
     {/if}
 
-    {#each moderators as moderator(moderator.user_id)}
+    {#each moderators as moderator(moderator.user_id+"_"+moderator.class_id)}
         {#if selected == moderator.class_id}
             <div class="bg-base-300 w-[95%] max-w-screen-lg rounded-lg mx-auto my-1 flex items-center justify-between py-3 px-6">
                 <div class="flex items-center">
@@ -108,7 +109,7 @@
     </div>
     {/if}
 
-    {#each students as student(student.user_id)}
+    {#each students as student(student.user_id+"_"+student.class_id)}
         {#if selected == student.class_id}
             <div class="bg-base-300 w-[95%] max-w-screen-lg rounded-lg mx-auto my-1 flex items-center justify-between py-3 px-6">
                 <div class="flex items-center">

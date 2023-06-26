@@ -97,7 +97,7 @@
 
     let badgeColor
     if (comment.op_role == "student") {
-        badgeColor = ""
+        badgeColor = "text-base-content"
     }
     else if (comment.op_role == "moderator") {
         badgeColor = "badge-primary"
@@ -189,8 +189,8 @@
         <div class="mr-2 mb-2 flex-grow">
             <div class="flex justify-between">
                 <div class="flex items-center my-1">
-                    {#if commentType!="pending" && comment.op_anon_status=="none" && comment.op_role!="student"}
-                    <div class="badge {badgeColor} text-gray-100 text-xs mr-2">
+                    {#if commentType!="pending" && comment.op_anon_status=="none"}
+                    <div class="badge {badgeColor} text-xs mr-2">
                             {comment.op_role}
                         </div>  
                     {/if}
@@ -204,7 +204,7 @@
                     {/if}
 
                     {#if comment.op_anon_status == "partial" && (user_role=="instructor")}
-                        <div class="badge badge-accent badge-outline text-xs uppercase font-semibold" on:mousedown={handleClickSeeAuthor} on:mouseup={handleUnclickSeeAuthor}>Click to See Author's Name</div>
+                        <div class="badge badge-accent badge-outline text-xs uppercase font-semibold cursor-pointer" on:mousedown={handleClickSeeAuthor} on:mouseup={handleUnclickSeeAuthor}>Click to See Author's Name</div>
                     {/if}
                    
                 </div>

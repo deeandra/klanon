@@ -29,8 +29,8 @@
         }
     }
 
-    let post_tab = ""
-    let comment_tab = "tab-active"
+    let post_tab = "tab-active"
+    let comment_tab = ""
 
     function handleTab2Click(tab) {
         post_tab = ""
@@ -327,12 +327,12 @@
 </form>
 
 <label for="edit_post_modal" id="toggle_edit_post_modal" class="hidden"></label>
-{#if data.posts}
+{#if draft_posts.length>0}
 <EditPostModal post={post_to_edit ? post_to_edit : posts[0]} {form} {data}></EditPostModal>
 {/if}
 
 <label for="edit_comment_modal" id="toggle_edit_comment_modal" class="hidden"></label>
 
-{#if data.comments}
+{#if draft_comments.length>0}
 <EditCommentModal comment={comment_to_edit ? comment_to_edit : comments[0]} {form} {data}></EditCommentModal>
 {/if}

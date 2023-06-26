@@ -1,4 +1,5 @@
 import { redirect } from '@sveltejs/kit';
+import { MODEL_API_URL } from '$env/static/public'
 
 /* eslint-disable no-unused-vars */
 export const load = async ({ locals, params, cookies }) => {
@@ -86,6 +87,7 @@ export const actions = {
 
         // || body.role != "student"
         if (body.post_status == "draft" || body.post_status == "pending") {
+            // console.log(body)
             const { data:post, error:err1 } = await locals.supabase.from('post')
                 .insert({
                     user_id: session.user.id, 
@@ -101,6 +103,7 @@ export const actions = {
                 console.log(err1)
             }
             else {
+                // console.log(body)
                 let pseudonym
                 if (body.anon_status == "none") {
                     pseudonym = ""
@@ -126,7 +129,7 @@ export const actions = {
         }
         else{
             try {
-                const res = await fetch("http://127.0.0.1:5000/predict", {
+                const res = await fetch(MODEL_API_URL, {
                     method: "POST",
                     body: formData
                 })
@@ -316,6 +319,23 @@ export const actions = {
         const { error:err } = await locals.supabase.from('user_class')
             .update({display_name: body.display_name})
             .eq('user_id', session.user.id)
+            .eq('class_id', class_id)
+
+        if (err) {
+            console.log(err)
+        }
+        
+    },
+
+    changerole: async ({request, locals, params}) => {
+        const session = await locals.getSession();
+        const class_id = params.class_id
+
+        const body = Object.fromEntries(await request.formData())
+
+        const { error:err } = await locals.supabase.from('user_class')
+            .update({role: body.new_role})
+            .eq('user_id', body.member_id)
             .eq('class_id', class_id)
 
         if (err) {

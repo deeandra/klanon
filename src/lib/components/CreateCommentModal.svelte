@@ -32,9 +32,11 @@
     let display_name = ""
     let user_display_name
 
-    let anon_status ="none"
+    let anon_status = form?.body?.anon_status ? form.body.anon_status : "none"
     const generated_pseudonym = generatePseudonym()
-    let pseudonym = generated_pseudonym
+    let pseudonym = form?.body?.pseudonym ? form.body.pseudonym : generated_pseudonym
+
+    // $: console.log(parent_comment)
 
     $: {
         if (data.user_post_anon_status) {
@@ -66,7 +68,7 @@
         
     }
 
-    console.log(data.user_post_anon_status)
+    // console.log(data.user_post_anon_status)
 
     let abusiveAlertMode = ""
 
@@ -100,19 +102,19 @@
 <Modal modalId={modalId} mode={mode}>
     {#if !parent_comment}
         <div class="badge badge-accent badge-outline text-gray-600 text-sm font-bold">
-            {"COMMENTING IN " + data.thisClass.name.toUpperCase()}
+            {"COMMENTING ON " + data.thisClass.name.toUpperCase()}
         </div>
     {:else}
         <!-- <h3 class="font-bold">Commenting on <strong>{data.thisClass.name}</strong></h3> -->
         <div class="badge badge-accent badge-outline text-gray-600 text-sm font-bold mb-2">
-            {"COMMENTING IN " + parent_comment.class_name.toUpperCase()}
+            {"COMMENTING ON " + parent_comment.class_name.toUpperCase()}
         </div>
         <div class="badge text-xs font-bold text-gray-600">IN REPLY TO</div>
         <div class="bg-base-100 rounded-lg text-xs font-semibold p-1">
             
             <div class="flex mt-1">
-                <div class="mr-1">
-                    <Avatar url={parent_comment.op_ava_url} username={parent_comment.op_display_name} size="40" supabase={data.supabase}/>
+                <div class="mr-1 w-10 flex-shrink-0">
+                    <Avatar url={parent_comment.op_avatar_url} username={parent_comment.op_display_name} size="40" supabase={data.supabase}/>
                 </div>
                 <div class="w-[2px] bg-accent my-[2px] ml-2 mr-[0.3rem]"></div>
                 <div class="flex flex-col justify-center ml-1">

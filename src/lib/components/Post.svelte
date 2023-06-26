@@ -91,7 +91,7 @@
 
     let badgeColor
     if (post.op_role == "student") {
-        badgeColor = ""
+        badgeColor = "text-base-content"
     }
     else if (post.op_role == "moderator") {
         badgeColor = "badge-primary"
@@ -159,8 +159,8 @@
             <h3 class="text-lg font-semibold">{post.title}</h3> 
 
             <div class="flex items-center my-1">
-                {#if postType!="pending" && post.op_anon_status=="none" && post.op_role!="student"}
-                    <div class="badge {badgeColor} text-gray-100 text-xs mr-2">
+                {#if postType!="pending" && post.op_anon_status=="none"}
+                    <div class="badge {badgeColor} text-xs mr-2">
                         {post.op_role}
                     </div>  
                 {/if}
@@ -171,7 +171,7 @@
                     <div class="badge badge-accent badge-outline text-xs mr-2">anon</div>
                 {/if}
                 {#if post.op_anon_status == "partial" && (user_role=="instructor")}
-                    <div class="badge badge-accent badge-outline text-xs uppercase font-semibold" on:mousedown={handleClickSeeAuthor} on:mouseup={handleUnclickSeeAuthor}>Click to See Author's Name</div>
+                    <div class="badge badge-accent badge-outline text-xs uppercase font-semibold cursor-pointer" on:mousedown={handleClickSeeAuthor} on:mouseup={handleUnclickSeeAuthor}>Click to See Author's Name</div>
                 {/if}
             </div>
 
