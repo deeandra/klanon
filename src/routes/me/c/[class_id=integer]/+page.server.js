@@ -75,7 +75,7 @@ export const actions = {
     post: async ({request, locals, cookies, params}) => {
         const session = await locals.getSession();
 
-        const body = Object.fromEntries(await request.formData())
+        let body = Object.fromEntries(await request.formData())
 
         let message = ""
         let prediction = {}
@@ -124,6 +124,7 @@ export const actions = {
                     console.log(err1)
                 }else {
                     message = "success"
+                    body = ""
                 }
             }
         }
@@ -176,10 +177,12 @@ export const actions = {
                         console.log(err1)
                     }else {
                         message = "success"
+                        body = ""
                     }
                 }
             }else {
                 message = "abusive language detected"
+                
             }
         }
 
